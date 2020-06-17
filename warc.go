@@ -338,8 +338,7 @@ func (w *Writer) WriteRecord(r *Record) (int, error) {
 	}
 
 	total := 0
-	// write is a helper function to count the total number of
-	// written bytes to w.target.
+	// write is a helper function to count the total number of bytes written to w.target.
 	write := func(format string, args ...interface{}) error {
 		written, err := fmt.Fprintf(w.target, format, args...)
 		total += written
@@ -358,7 +357,7 @@ func (w *Writer) WriteRecord(r *Record) (int, error) {
 		return total, err
 	}
 	for key, value := range r.Header {
-		if err := write("%s: %s\r\n", strings.Title(key), value); err != nil {
+		if err := write("%s: %s\r\n", keyCase(key), value); err != nil {
 			return total, err
 		}
 	}
@@ -366,4 +365,18 @@ func (w *Writer) WriteRecord(r *Record) (int, error) {
 		return total, err
 	}
 	return total, nil
+}
+
+// keyCase converts a WARC header key into canonical case (not required by the spec)
+func keyCase(key string) string {
+	in := strings.Split(key, "-")
+	out := make([]string, len(in))
+	for i, elt := range in {
+		if elt == "warc" || elt == "uri" || elt == "id" || elt == "ip" {
+			out[i] = strings.ToUpper(elt)
+		} else {
+			out[i] = strings.Title(elt)
+		}
+	}
+	return strings.Join(out, "-")
 }
