@@ -327,7 +327,7 @@ func (w *Writer) WriteRecord(r *Record) (int, error) {
 	// If the values for WARC-Date and WARC-Type are missing, add them
 	// because the standard says they're mandatory.
 	if r.Header["warc-date"] == "" {
-		r.Header["warc-date"] = time.Now().Format(time.RFC3339)
+		r.Header["warc-date"] = time.Now().UTC().Format(time.RFC3339)
 	}
 	if r.Header["warc-type"] == "" {
 		r.Header["warc-type"] = "resource"
