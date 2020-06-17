@@ -12,6 +12,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 // Mode defines the way Reader will generate Records.
@@ -324,8 +326,10 @@ func (w *Writer) WriteRecord(r *Record) (int, error) {
 	// Content-Length is the number of octets in the content. If no content is
 	// present, a value of '0' (zero) shall be used.
 	r.Header["content-length"] = strconv.Itoa(len(data))
-	// If the values for WARC-Date and WARC-Type are missing, add them
-	// because the standard says they're mandatory.
+	// The standard specifies WARC-Record-ID, WARC-Date, and WARC-Type as mandatory
+	if r.Header["warc-record-id"] == "" {
+		r.Header["warc-record-id"] = "<urn:uuid:" + uuid.NewV4().String() + ">"
+	}
 	if r.Header["warc-date"] == "" {
 		r.Header["warc-date"] = time.Now().UTC().Format(time.RFC3339)
 	}

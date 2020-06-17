@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"crypto/sha1"
 	"fmt"
-	"github.com/slyrz/warc"
 	"io"
 	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/gavincarr/warc"
 )
 
 func testFileHash(t *testing.T, path string, mode warc.Mode) {
